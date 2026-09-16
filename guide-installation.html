@@ -1,0 +1,1435 @@
+<!DOCTYPE html>
+
+<html lang="fr"><head><script data-od-external-dependencies="" type="application/json">["https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap"]</script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Guide d'installation — Poste de travail IA souverain</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+  :root{
+    --bg:#141414; --bg-grad:linear-gradient(150deg,#141414 0%,#1c1c1c 100%);
+    --surface:#1e1e1e; --surface-2:#242424; --fg:#f5f3ef; --muted:#a9a39a;
+    --border:rgba(245,243,239,0.14); --accent:#FF5722; --accent-ink:#171310;
+    --sovereign:#8fd6a8; --cloud:#8fb8d6; --warn:#ffcf6b;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bg-grad); color:var(--fg);
+    font-family:'Space Grotesk',sans-serif; font-size:17px; line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--accent);}
+  a:focus-visible{outline:2px solid var(--accent); outline-offset:3px; border-radius:2px;}
+  code, pre{font-family:'JetBrains Mono',monospace;}
+  code{background:var(--surface-2); padding:2px 7px; border-radius:4px; font-size:0.88em; color:#e9e6df; overflow-wrap:anywhere;}
+  pre{background:#0d0d0c; border:1px solid var(--border); border-radius:8px; padding:20px 24px; max-width:100%; overflow-x:hidden; white-space:pre-wrap; overflow-wrap:anywhere; word-break:break-word; font-size:14.5px; line-height:1.6; color:#e9e6df;}
+  pre code{background:none; padding:0; font-size:1em; white-space:inherit; overflow-wrap:inherit; word-break:inherit;}
+  .cm{color:#7a756c;}
+
+  /* top bar */
+  .topbar{position:sticky; top:0; z-index:50; background:rgba(20,20,20,0.92); backdrop-filter:blur(10px); border-bottom:1px solid var(--border);}
+  .topbar-inner{max-width:960px; margin:0 auto; padding:16px 32px; display:flex; align-items:center; justify-content:space-between; gap:24px;}
+  .brand{font-family:'Archivo Black'; font-size:15px; letter-spacing:-0.01em;}
+  .toc{display:flex; gap:20px; flex-wrap:wrap; font-size:13px; font-weight:600; letter-spacing:.07em; text-transform:uppercase;}
+  .toc a{color:var(--muted); text-decoration:none;}
+  .toc a:hover{color:var(--accent);}
+
+  .wrap{max-width:960px; margin:0 auto; padding:0 32px 140px;}
+
+  .hero{padding:76px 0 56px; border-bottom:1px solid var(--border);}
+  .hero-tag{display:inline-flex; gap:10px; align-items:center; background:var(--surface-2); border:1px solid var(--border); padding:8px 16px; border-radius:999px; font:600 12px 'Space Grotesk'; letter-spacing:.08em; text-transform:uppercase; color:var(--sovereign);}
+  h1.title{font-family:'Archivo Black'; font-size:56px; line-height:1.06; letter-spacing:-0.02em; margin:28px 0 18px; max-width:20ch;}
+  .hero p.lead{font-size:19px; color:var(--muted); max-width:68ch; line-height:1.6;}
+
+  section.sec{padding:64px 0; border-bottom:1px solid var(--border);}
+  section.sec:last-of-type{border-bottom:none;}
+  .sec-kicker{font:700 13px 'Space Grotesk'; letter-spacing:.09em; text-transform:uppercase; color:var(--accent); margin-bottom:10px; display:block;}
+  h2.h2{font-family:'Archivo Black'; font-size:34px; letter-spacing:-0.01em; margin:0 0 18px;}
+  h3.h3{font-family:'Space Grotesk'; font-weight:700; font-size:19px; margin:34px 0 12px;}
+  p{margin:0 0 14px; max-width:74ch;}
+
+  .os-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin:22px 0 8px;}
+  .os-card{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px 22px 20px; min-width:0; max-width:100%;}
+  .os-card h4{font:700 13px 'Space Grotesk'; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:0 0 12px;}
+  .os-card pre{margin:0; font-size:13px; padding:14px 16px;}
+
+  table{width:100%; max-width:100%; border-collapse:collapse; margin:18px 0; font-size:15.5px; table-layout:auto;}
+  .model-matrix{table-layout:fixed;}
+  .model-matrix .col-vram{width:10%;}
+  .model-matrix .col-machine{width:16%;}
+  .model-matrix .col-model{width:19%;}
+  .model-matrix .col-command{width:20%;}
+  .model-matrix .col-verdict{width:35%;}
+  .model-matrix code{font-size:.82em;}
+  th,td{padding:11px 14px; border-bottom:1px solid var(--border); text-align:left; vertical-align:top; overflow-wrap:anywhere; word-break:break-word;}
+  th{font:700 12px 'Space Grotesk'; letter-spacing:.06em; text-transform:uppercase; color:var(--muted);}
+
+  .callout{border:1px solid var(--border); background:var(--surface-2); padding:20px 24px; border-radius:8px; margin:22px 0;}
+  .callout .label{font:700 12px 'Space Grotesk'; letter-spacing:.08em; text-transform:uppercase; color:var(--warn); margin-bottom:8px; display:block;}
+  .callout.danger .label{color:#ff8a70;}
+  .callout p:last-child{margin-bottom:0;}
+
+  ul.checklist{list-style:none; margin:20px 0; padding:0; display:flex; flex-direction:column; gap:11px;}
+  ul.checklist li{display:flex; gap:12px; align-items:flex-start; font-size:16px;}
+  ul.checklist li::before{content:"✓"; color:var(--sovereign); font-weight:700; flex-shrink:0;}
+
+  .tag{display:inline-flex; align-items:center; gap:6px; font:700 11px 'Space Grotesk'; letter-spacing:.07em; text-transform:uppercase; padding:4px 11px; border-radius:999px; border:1px solid var(--border); margin-left:8px;}
+  .tag-win{color:#a9c8e8; border-color:rgba(169,200,232,.4);}
+  .tag-linux{color:var(--sovereign); border-color:rgba(143,214,168,.4);}
+  .tag-mac{color:#e8c8a9; border-color:rgba(232,200,169,.4);}
+
+  .backtotop{position:fixed; right:28px; bottom:28px; background:var(--surface-2); border:1px solid var(--border); color:var(--fg); text-decoration:none; padding:10px 16px; border-radius:999px; font-size:13px; font-weight:600; transition:background .15s, border-color .15s;}
+  .backtotop:hover{background:var(--surface); border-color:var(--accent);}
+
+  .api-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin:22px 0 8px;}
+  .api-card{background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:22px 24px; min-width:0; max-width:100%; display:flex; flex-direction:column; gap:10px;}
+  .api-card h4{font:700 15px 'Space Grotesk'; letter-spacing:0; color:var(--fg); margin:2px 0 0; text-transform:none;}
+  .api-card .api-tagline{font-size:15px; color:var(--muted); margin:0; line-height:1.55;}
+  .api-card .api-link{font:600 13px 'JetBrains Mono'; letter-spacing:0; color:var(--accent); text-decoration:none; margin-top:auto; word-break:break-all;}
+  .api-card .api-link:hover{text-decoration:underline;}
+  .api-card .api-badge{display:inline-flex; align-items:center; gap:6px; font:700 11px 'Space Grotesk'; letter-spacing:.07em; text-transform:uppercase; padding:4px 11px; border-radius:999px; border:1px solid rgba(143,184,214,.4); color:var(--cloud); align-self:flex-start; background:rgba(143,184,214,.05);}
+  footer.doc-footer{padding:48px 0 0; color:var(--muted); font-size:14px;}
+
+  @media (max-width:760px){
+    .os-grid,.api-grid{grid-template-columns:1fr;}
+    .toc{display:none;}
+    h1.title{font-size:40px;}
+  }
+
+/* ===========================================================
+   Premium installation guide animations v3
+   Section-triggered timeline, coherent scroll timing
+   =========================================================== */
+:root {
+  --guide-enter-dur: 880ms;
+  --guide-enter-ease: cubic-bezier(.16,1,.3,1);
+  --guide-hover-ease: cubic-bezier(.2,.75,.25,1);
+}
+
+/* Hero starts once on page load. */
+html.guide-animated .hero-step {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: guide-hero-enter 980ms var(--guide-enter-ease)
+    var(--hero-delay, 0ms) forwards;
+}
+
+@keyframes guide-hero-enter {
+  from { opacity:0; transform:translateY(24px) scale(.994); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* Before its section is triggered, every step is hidden but occupies layout. */
+html.guide-animated .guide-section .reveal-step {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+/* A section enters the viewport -> its local timeline starts in order. */
+html.guide-animated .guide-section.is-inview .reveal-step {
+  animation: guide-step-enter var(--guide-enter-dur) var(--guide-enter-ease)
+    var(--step-delay, 0ms) forwards;
+}
+
+@keyframes guide-step-enter {
+  0%   { opacity:0; transform:translateY(20px); }
+  72%  { opacity:1; }
+  100% { opacity:1; transform:translateY(0); }
+}
+
+/* Cards settle with slightly more depth. */
+html.guide-animated .guide-section.is-inview .os-card.reveal-step,
+html.guide-animated .guide-section.is-inview .api-card.reveal-step,
+html.guide-animated .guide-section.is-inview .card.reveal-step {
+  animation-name: guide-card-enter;
+}
+
+@keyframes guide-card-enter {
+  from { opacity:0; transform:translateY(24px) scale(.982); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* Table rows arrive laterally, while the table shell stays stable. */
+html.guide-animated .guide-section .reveal-step:is(tr) {
+  transform: translateX(-14px);
+}
+
+html.guide-animated .guide-section.is-inview .reveal-step:is(tr) {
+  animation-name: guide-row-enter;
+  animation-duration: 720ms;
+}
+
+@keyframes guide-row-enter {
+  from { opacity:0; transform:translateX(-14px); }
+  to   { opacity:1; transform:translateX(0); }
+}
+
+/* Code label + code frame stay visually linked when grouped by their parent. */
+html.guide-animated .guide-section.is-inview .reveal-step:has(> .code-label + pre) {
+  animation-name: guide-code-group-enter;
+}
+
+@keyframes guide-code-group-enter {
+  from { opacity:0; transform:translateY(18px) scale(.992); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+
+/* Callouts are the punctuation mark at the end of a section. */
+html.guide-animated .guide-section.is-inview .callout.reveal-step {
+  animation-name: guide-callout-enter;
+  animation-duration: 980ms;
+}
+
+@keyframes guide-callout-enter {
+  0% {
+    opacity:0;
+    transform:translateY(18px);
+    box-shadow:0 0 0 rgba(255,87,34,0);
+  }
+  78% {
+    opacity:1;
+    box-shadow:0 14px 38px rgba(255,87,34,.08);
+  }
+  100% {
+    opacity:1;
+    transform:translateY(0);
+    box-shadow:0 0 0 rgba(255,87,34,0);
+  }
+}
+
+/* -----------------------------------------------------------
+   Premium hover interactions
+   ----------------------------------------------------------- */
+.os-card,
+.api-card,
+.card,
+.callout,
+table,
+pre,
+a,
+.tag,
+.api-badge,
+button {
+  transition:
+    transform 320ms var(--guide-hover-ease),
+    border-color 320ms var(--guide-hover-ease),
+    background-color 320ms var(--guide-hover-ease),
+    box-shadow 320ms var(--guide-hover-ease),
+    color 320ms var(--guide-hover-ease),
+    filter 320ms var(--guide-hover-ease);
+}
+
+.os-card:hover,
+.api-card:hover,
+.card:hover {
+  transform: translateY(-5px) scale(1.012);
+  border-color: rgba(255,87,34,.50);
+  box-shadow:
+    0 18px 46px rgba(0,0,0,.22),
+    0 0 0 1px rgba(255,87,34,.06);
+}
+
+table:hover {
+  box-shadow: 0 16px 40px rgba(0,0,0,.16);
+}
+
+table tbody tr {
+  transition:
+    transform 260ms var(--guide-hover-ease),
+    background-color 260ms var(--guide-hover-ease);
+}
+
+table tbody tr:hover {
+  transform: translateX(4px);
+  background: rgba(255,255,255,.025);
+}
+
+pre:hover {
+  transform: scale(1.004);
+  border-color: rgba(143,184,214,.40);
+  box-shadow: 0 14px 38px rgba(0,0,0,.22);
+}
+
+.callout:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255,207,107,.45);
+  box-shadow: 0 14px 38px rgba(0,0,0,.20);
+}
+
+a:hover {
+  filter: brightness(1.16);
+  text-decoration-thickness: 2px;
+}
+
+.tag:hover,
+.api-badge:hover {
+  transform: scale(1.07);
+  filter: brightness(1.12);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+section h2,
+section h3 {
+  transition:
+    transform 280ms var(--guide-hover-ease),
+    color 280ms var(--guide-hover-ease);
+}
+
+section h2:hover,
+section h3:hover {
+  transform: translateX(4px);
+}
+
+
+/* ===========================================================
+   v4 - boutons copier pour les encarts de prompts
+   =========================================================== */
+.copy-pre-wrap {
+  position: relative;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 20;
+  appearance: none;
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(8,9,10,.86);
+  color: rgba(245,243,239,.92);
+  padding: 7px 10px;
+  border-radius: 999px;
+  font: 700 11px/1 'JetBrains Mono', monospace;
+  letter-spacing: .04em;
+  cursor: pointer;
+  box-shadow: 0 8px 22px rgba(0,0,0,.18);
+  transition:
+    transform 220ms cubic-bezier(.2,.75,.25,1),
+    background-color 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease;
+}
+
+.copy-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  background: rgba(255,87,34,.92);
+  border-color: rgba(255,87,34,.55);
+  box-shadow: 0 12px 28px rgba(0,0,0,.24);
+}
+
+.copy-btn.is-copied {
+  background: rgba(143,214,168,.92);
+  border-color: rgba(143,214,168,.58);
+  color: #0b1110;
+}
+
+.copy-btn.is-error {
+  background: rgba(255,207,107,.92);
+  border-color: rgba(255,207,107,.58);
+  color: #201600;
+}
+
+/* Reserve a little room so the button never covers the prompt content */
+.copy-pre-wrap > pre {
+  padding-top: 42px !important;
+}
+
+
+/* ===========================================================
+   v5 - robust copy buttons for prompts + install commands
+   =========================================================== */
+.copy-block {
+  position: relative !important;
+  display: block !important;
+  width: 100%;
+  margin: 0;
+}
+
+.copy-block > pre {
+  margin: 0 !important;
+  padding-top: 52px !important;
+}
+
+.copy-block > .copy-btn {
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+  z-index: 999 !important;
+
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+
+  appearance: none;
+  min-height: 30px;
+  padding: 7px 11px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(255,255,255,.16) !important;
+
+  background: rgba(19,20,22,.96) !important;
+  color: #f5f3ef !important;
+  font: 700 11px/1 'JetBrains Mono', monospace !important;
+  letter-spacing: .035em;
+
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+
+  box-shadow:
+    0 8px 24px rgba(0,0,0,.28),
+    inset 0 0 0 1px rgba(255,255,255,.02);
+
+  transform: none !important;
+}
+
+.copy-block > .copy-btn:hover {
+  background: #ff5722 !important;
+  border-color: rgba(255,87,34,.72) !important;
+  color: white !important;
+  transform: translateY(-1px) scale(1.025) !important;
+}
+
+.copy-block > .copy-btn:active {
+  transform: translateY(0) scale(.985) !important;
+}
+
+.copy-block > .copy-btn.is-copied {
+  background: #8fd6a8 !important;
+  border-color: #8fd6a8 !important;
+  color: #0a120d !important;
+}
+
+.copy-block > .copy-btn.is-error {
+  background: #ffcf6b !important;
+  border-color: #ffcf6b !important;
+  color: #1e1604 !important;
+}
+
+.copy-icon {
+  display: inline-block;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.copy-label {
+  display: inline-block;
+}
+
+/* Keep the button visible even while its surrounding reveal animation runs. */
+.guide-section .copy-block.reveal-step > .copy-btn,
+.guide-section.is-inview .copy-block.reveal-step > .copy-btn {
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Commands and prompts get a subtle different hover emphasis */
+.copy-prompt > .copy-btn:hover {
+  box-shadow: 0 10px 28px rgba(255,87,34,.20);
+}
+.copy-command > .copy-btn:hover {
+  box-shadow: 0 10px 28px rgba(143,184,214,.16);
+}
+
+@media (max-width: 760px) {
+  .copy-block > .copy-btn {
+    top: 8px !important;
+    right: 8px !important;
+    padding: 6px 9px !important;
+    font-size: 10px !important;
+  }
+
+  .copy-block > pre {
+    padding-top: 48px !important;
+  }
+}
+
+
+/* ===========================================================
+   v6 - copy buttons animate with their parent block
+   =========================================================== */
+
+/* The wrapper is now the animated object. The pre itself stays stable inside. */
+html.guide-animated .guide-section .copy-block.reveal-step {
+  opacity: 0;
+  transform: translateY(20px) scale(.992);
+}
+
+html.guide-animated .guide-section.is-inview .copy-block.reveal-step {
+  animation: guide-copy-block-enter 880ms var(--guide-enter-ease)
+    var(--step-delay, 0ms) forwards !important;
+}
+
+@keyframes guide-copy-block-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(.992);
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Avoid a second nested entrance animation on the code content. */
+html.guide-animated .guide-section .copy-block.reveal-step > pre {
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+}
+
+/* Button is part of the block and fades/slides with it instead of being forced visible. */
+.copy-block > .copy-btn {
+  opacity: .92 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+/* Once the block is in view, the button remains stable and only reacts to interaction. */
+.guide-section.is-inview .copy-block > .copy-btn {
+  opacity: .92 !important;
+}
+
+/* Hover remains subtle and consistent with card hover language. */
+.copy-block > .copy-btn:hover {
+  opacity: 1 !important;
+  transform: translateY(-2px) scale(1.025) !important;
+}
+
+/* Copy confirmation uses a tiny pulse, without breaking block timing. */
+.copy-block > .copy-btn.is-copied {
+  animation: copy-confirm-pulse 420ms cubic-bezier(.16,1,.3,1);
+}
+
+@keyframes copy-confirm-pulse {
+  0%   { transform: translateY(-1px) scale(1); }
+  45%  { transform: translateY(-1px) scale(1.08); }
+  100% { transform: translateY(-1px) scale(1); }
+}
+
+/* Errors get the same restrained interaction language. */
+.copy-block > .copy-btn.is-error {
+  animation: copy-error-nudge 320ms cubic-bezier(.36,.07,.19,.97);
+}
+
+@keyframes copy-error-nudge {
+  0%,100% { transform: translateX(0); }
+  30%     { transform: translateX(-3px); }
+  70%     { transform: translateX(3px); }
+}
+
+
+/* ===========================================================
+   v7 - smooth anchor navigation
+   =========================================================== */
+html {
+  scroll-behavior: smooth !important;
+}
+
+section[id],
+[id].anchor-target {
+  scroll-margin-top: 28px;
+}
+
+
+/* ===========================================================
+   v8 - deterministic animated anchor navigation
+   =========================================================== */
+
+/* JS controls the actual anchor animation; CSS remains a graceful fallback. */
+html {
+  scroll-behavior: auto !important;
+}
+
+.toc a[href^="#"] {
+  transition:
+    transform 220ms cubic-bezier(.2,.75,.25,1),
+    color 220ms ease,
+    background-color 220ms ease,
+    border-color 220ms ease;
+}
+
+.toc a[href^="#"]:hover {
+  transform: translateY(-1px);
+}
+
+
+/* ===========================================================
+   v9 - copy buttons for Ollama model commands in matrix
+   =========================================================== */
+
+.model-command-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.model-command-wrap > code {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.copy-inline-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  padding: 5px 8px;
+
+  background: rgba(19,20,22,.88);
+  color: rgba(245,243,239,.88);
+
+  font: 700 10px/1 'JetBrains Mono', monospace;
+  letter-spacing: .03em;
+
+  cursor: pointer;
+  opacity: .82;
+
+  transition:
+    opacity 220ms ease,
+    transform 220ms cubic-bezier(.2,.75,.25,1),
+    background-color 220ms ease,
+    border-color 220ms ease,
+    color 220ms ease;
+}
+
+/* The button enters naturally with the animated table row. */
+.model-matrix tr.reveal-step .copy-inline-btn {
+  transform: translateY(0);
+}
+
+.copy-inline-btn:hover {
+  opacity: 1;
+  transform: translateY(-1px) scale(1.03);
+  background: #ff5722;
+  border-color: rgba(255,87,34,.7);
+  color: white;
+}
+
+.copy-inline-btn.is-copied {
+  opacity: 1;
+  background: #8fd6a8;
+  border-color: #8fd6a8;
+  color: #0a120d;
+  animation: copy-confirm-pulse 420ms cubic-bezier(.16,1,.3,1);
+}
+
+.copy-inline-btn.is-error {
+  opacity: 1;
+  background: #ffcf6b;
+  border-color: #ffcf6b;
+  color: #1e1604;
+  animation: copy-error-nudge 320ms cubic-bezier(.36,.07,.19,.97);
+}
+
+@media (max-width: 760px) {
+  .model-command-wrap {
+    align-items: flex-start;
+  }
+
+  .copy-inline-btn {
+    padding: 5px 7px;
+    font-size: 9px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+<div class="topbar-inner">
+<div class="brand">Guide d'installation — IA souveraine</div>
+<nav class="toc">
+<a href="#obsidian">Obsidian</a>
+<a href="#graphify">Graphify</a>
+<a href="#ollama">Modèles locaux</a>
+<a href="#opencode">OpenCode</a>
+<a href="#agent-auto">Agent auto</a>
+<a href="#mcp-obsidian">MCP</a>
+<a href="#stack">Stack</a>
+<a href="#opendesign">OpenDesign</a>
+<a href="#prompts-opencode">Prompts</a>
+<a href="#api-gratuites">API gratuites</a>
+<a href="#checklist">Checklist</a>
+</nav>
+</div>
+</div>
+<div class="wrap">
+<div class="hero">
+<span class="hero-tag hero-step" style="--hero-delay:120ms;">● Document complémentaire à la matinée de cours</span>
+<h1 class="title hero-step" style="--hero-delay:360ms;">Toutes les commandes, pour Windows, Linux et macOS</h1>
+<p class="lead hero-step" style="--hero-delay:600ms;">Ce document accompagne le diaporama <code>index.html</code>. Chaque section correspond à une partie du cours et regroupe les commandes à exécuter, dans l’ordre, pour obtenir un poste de travail IA multi-modèle et indépendant d’un seul fournisseur. Les éléments marqués comme évolutifs doivent être revérifiés avant chaque session collective.</p>
+</div>
+<section class="sec guide-section" data-reveal-count="15" id="obsidian">
+<span class="sec-kicker">Partie 04 du cours</span>
+<h2 class="h2 reveal-step" data-reveal-index="0" style="--step-delay:90ms;">Obsidian — le second cerveau</h2>
+<p class="reveal-step" data-reveal-index="1" style="--step-delay:197ms;">Application locale gratuite. Aucune donnée n'est envoyée à un service tiers tant qu'aucune synchronisation cloud n'est activée.</p>
+<p>Site officiel &amp; téléchargement toutes plateformes : <a href="https://obsidian.md/" rel="noopener noreferrer" target="_blank"><strong>obsidian.md</strong></a> — installeurs Windows .exe, macOS .dmg et Linux AppImage disponibles depuis cette page.</p>
+<h3 class="h3 reveal-step" data-reveal-index="2" style="--step-delay:304ms;">Installation</h3>
+<div class="os-grid">
+<div class="os-card reveal-step" data-reveal-index="3" style="--step-delay:411ms;"><h4>Windows</h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-7" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-7"><code>winget install Obsidian.Obsidian
+<span class="cm"># ou installeur .exe : obsidian.md/download</span></code></pre></div></div>
+<div class="os-card reveal-step" data-reveal-index="4" style="--step-delay:518ms;"><h4>macOS</h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-8" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-8"><code>brew install --cask obsidian
+<span class="cm"># ou .dmg : obsidian.md/download</span></code></pre></div></div>
+<div class="os-card reveal-step" data-reveal-index="5" style="--step-delay:625ms;"><h4>Linux</h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-9" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-9"><code>flatpak install flathub md.obsidian.Obsidian
+<span class="cm"># ou AppImage officielle sur obsidian.md</span></code></pre></div></div>
+</div>
+<h3 class="h3 reveal-step" data-reveal-index="6" style="--step-delay:732ms;">Créer le vault et le versionner</h3>
+<div class="copy-block copy-command reveal-step" data-reveal-index="7" style="--step-delay:839ms;"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-10" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-10"><code><span class="cm"># Dans Obsidian : "Créer un nouveau vault" → choisir un dossier local, ex.</span>
+<span class="cm"># Windows : D:\Documents\Obsidian\MonVault</span>
+<span class="cm"># macOS/Linux : ~/Documents/Obsidian/MonVault</span>
+
+cd MonVault
+git init
+git add .
+git commit -m "chore: initialise le vault"</code></pre></div>
+<h3 class="h3 reveal-step" data-reveal-index="8" style="--step-delay:946ms;">Plugins communautaires à activer</h3>
+<p>Réglages → Plugins communautaires → Parcourir, puis installer et activer :</p>
+<table>
+<tbody><tr class="reveal-step" data-reveal-index="9" style="--step-delay:1053ms;"><th>Plugin</th><th>Rôle</th></tr>
+<tr class="reveal-step" data-reveal-index="10" style="--step-delay:1160ms;"><td><strong>Local REST API</strong></td><td>Expose le vault via l’API locale et fournit désormais aussi un serveur MCP natif. Endpoint recommandé : https://127.0.0.1:27124/mcp/ avec authentification Bearer. Le certificat est auto-signé : il faut l’approuver côté OS/client.</td></tr>
+<tr class="reveal-step" data-reveal-index="11" style="--step-delay:1267ms;"><td><strong>Smart Connections</strong></td><td>Recherche sémantique entre notes. Utile pour retrouver une décision par le sens ; optionnel pour le fonctionnement du MCP de base.</td></tr>
+<tr class="reveal-step" data-reveal-index="12" style="--step-delay:1374ms;"><td><strong>Obsidian Git</strong></td><td>Commit/pull/push automatiques du vault. À activer seulement après avoir configuré un remote privé, les exclusions et une stratégie de gestion des conflits.</td></tr>
+</tbody></table>
+<p>Dans les réglages du plugin Local REST API, copiez la clé API générée. Ne la placez jamais en clair dans Git : stockez-la dans une variable d’environnement. Le certificat HTTPS local peut être téléchargé depuis le plugin et ajouté aux certificats de confiance du système.</p>
+<h3 class="h3 reveal-step" data-reveal-index="13" style="--step-delay:1481ms;">Structure de vault recommandée</h3>
+<pre class="reveal-step" data-reveal-index="14" style="--step-delay:1588ms;"><code>MonVault/
+├── INDEX.md              <span class="cm"># hub de navigation central</span>
+├── LOG.md                <span class="cm"># journal chronologique, append-only</span>
+├── SCHEMA.md             <span class="cm"># conventions frontmatter + wikilinks</span>
+├── ProjetA/
+│   ├── _memory/memory.md
+│   └── decisions-log.md
+└── _global/</code></pre>
+</section>
+<section class="sec guide-section" data-reveal-count="4" id="graphify">
+<span class="sec-kicker">Partie 05 du cours</span>
+<h2 class="h2 reveal-step" data-reveal-index="0" style="--step-delay:90ms;">Graphify — le graphe de dépendances</h2>
+<div class="callout reveal-step" data-reveal-index="1" style="--step-delay:430ms;">
+<span class="label">À vérifier avant de figer un script</span>
+<p>Graphify évolue rapidement et sa méthode de distribution peut changer. Avant une installation en masse (ex. poste de plusieurs étudiants), vérifier la commande d'installation exacte sur le dépôt officiel du projet plutôt que de copier une commande figée dans ce document.</p>
+</div>
+<h3 class="h3 reveal-step" data-reveal-index="2" style="--step-delay:530ms;">Utilisation une fois installé (identique sur les 3 OS)</h3>
+<div class="copy-block copy-command reveal-step" data-reveal-index="3" style="--step-delay:750ms;"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-11" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-11"><code><span class="cm"># Se placer à la racine du projet à indexer</span>
+cd mon-projet
+
+<span class="cm"># Première indexation — construit graphify-out/graph.json + GRAPH_REPORT.md</span>
+graphify .
+
+<span class="cm"># Lire le rapport avant toute question d'architecture</span>
+cat graphify-out/GRAPH_REPORT.md
+
+<span class="cm"># Interroger le graphe au lieu de grepper</span>
+graphify query "processRequest"
+graphify path "ModuleA" "ServiceB"
+
+<span class="cm"># Ré-indexer après des modifications (rapide — AST seulement)</span>
+graphify update .</code></pre></div>
+</section>
+<section class="sec guide-section" data-reveal-count="22" id="ollama">
+<span class="sec-kicker">Partie 01 du cours — prérequis multi-modèle</span>
+<h2 class="h2 reveal-step" data-reveal-index="0" style="--step-delay:90ms;">Ollama &amp; modèles locaux</h2><p class="reveal-step" data-reveal-index="1" style="--step-delay:161ms;">Catalogue officiel des modèles disponibles : <a href="https://ollama.com/library" rel="noopener noreferrer" target="_blank"><strong>ollama.com/library</strong></a> — recherchez ici les modèles, tags, tailles et variantes avant de lancer `ollama run`.</p>
+<p>C'est la brique de souveraineté la plus concrète du cours : un modèle qui tourne sur votre machine, sans réseau, sans facture, et dont aucune donnée ne sort. Installez-la <strong>avant</strong> OpenCode, pour pouvoir y déclarer dès le départ deux fournisseurs — un cloud et un local.</p>
+<div class="os-grid">
+<div class="os-card reveal-step" data-reveal-index="2" style="--step-delay:232ms;"><h4>Windows <span class="tag tag-win">PowerShell</span></h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-12" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-12"><code>winget install Ollama.Ollama</code></pre></div></div>
+<div class="os-card reveal-step" data-reveal-index="3" style="--step-delay:303ms;"><h4>macOS <span class="tag tag-mac">Terminal</span></h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-13" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-13"><code>brew install --cask ollama</code></pre></div></div>
+<div class="os-card reveal-step" data-reveal-index="4" style="--step-delay:374ms;"><h4>Linux <span class="tag tag-linux">Terminal</span></h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-14" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-14"><code>curl -fsSL https://ollama.com/install.sh | sh</code></pre></div></div>
+</div>
+<h3 class="h3 reveal-step" data-reveal-index="5" style="--step-delay:445ms;">Recommandations actuelles par tranche de VRAM — catalogue vérifié fin août 2026</h3>
+<p><code>ollama run</code> est volontaire : si le modèle n'est pas présent, Ollama le télécharge puis le lance. Les tailles sont celles publiées par Ollama ; elles ne correspondent pas à la VRAM totale nécessaire. Gardez 2 à 4 Go de marge pour le contexte, Ollama et le système, surtout avec un long contexte.</p>
+<table class="model-matrix">
+<colgroup><col class="col-vram"/><col class="col-machine"/><col class="col-model"/><col class="col-command"/><col class="col-verdict"/></colgroup>
+<thead><tr class="reveal-step" data-reveal-index="6" style="--step-delay:516ms;"><th>VRAM</th><th>Machine cible</th><th>Recommandation actuelle</th><th>Commande</th><th>Pourquoi ce choix / limites</th></tr></thead>
+<tbody>
+<tr class="reveal-step" data-reveal-index="7" style="--step-delay:587ms;"><td><strong>2–4 Go</strong></td><td>iGPU ou mini-PC</td><td><strong>Qwen3.5 2B</strong><br/><small>2,7 Go · vision · 256K</small></td><td><div class="model-command-wrap"><code>ollama run qwen3.5:2b</code><button aria-label="Copier la commande du modèle" class="copy-inline-btn" data-copy-text="ollama run qwen3.5:2b" title="Copier cette commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button></div></td><td>Le maximum raisonnable pour une très petite VRAM ; privilégiez des prompts courts.</td></tr>
+<tr class="reveal-step" data-reveal-index="8" style="--step-delay:658ms;"><td><strong>4–6 Go</strong></td><td>iGPU ou petite carte</td><td><strong>Qwen3.5 4B</strong><br/><small>3,4 Go · vision · 256K</small></td><td><div class="model-command-wrap"><code>ollama run qwen3.5:4b</code><button aria-label="Copier la commande du modèle" class="copy-inline-btn" data-copy-text="ollama run qwen3.5:4b" title="Copier cette commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button></div></td><td>Meilleur point d'entrée multimodal ; aucun modèle 9B ne laisse assez de marge.</td></tr>
+<tr class="reveal-step" data-reveal-index="9" style="--step-delay:729ms;"><td><strong>6–8 Go</strong></td><td>RTX 2060/3060 8 Go</td><td><strong>Ornith 1.5 9B</strong><br/><small>6,6 Go · vision · 256K</small></td><td><div class="model-command-wrap"><code>ollama run ornith-1.5:9b</code><button aria-label="Copier la commande du modèle" class="copy-inline-btn" data-copy-text="ollama run ornith-1.5:9b" title="Copier cette commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button></div></td><td>Choix coding/agent supérieur dans cette gamme : 70,6 SWE-bench Verified auto-déclaré ; contexte court conseillé.</td></tr>
+<tr class="reveal-step" data-reveal-index="10" style="--step-delay:800ms;"><td><strong>8–12 Go</strong></td><td>RTX 3060 12 Go</td><td><strong>Ornith 1.5 9B</strong><br/><small>6,6 Go · vision · 256K</small></td><td><div class="model-command-wrap"><code>ollama run ornith-1.5:9b</code><button aria-label="Copier la commande du modèle" class="copy-inline-btn" data-copy-text="ollama run ornith-1.5:9b" title="Copier cette commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button></div></td><td>Meilleur choix pour OpenCode et les outils ; Qwen3.5 9B est l'alternative généraliste, pas le choix agentique prioritaire.</td></tr>
+<tr class="reveal-step" data-reveal-index="11" style="--step-delay:871ms;"><td><strong>12–16 Go</strong></td><td>RTX 4070/4060 Ti 16 Go</td><td><strong>Gemma 4 12B</strong><br/><small>7,6 Go · vision · outils · 256K</small></td><td><div class="model-command-wrap"><code>ollama run gemma4:12b</code><button aria-label="Copier la commande du modèle" class="copy-inline-btn" data-copy-text="ollama run gemma4:12b" title="Copier cette commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button></div></td><td>Choix actuel multimodal et raisonnement ; Ornith 9B reste préférable pour le coding agentique pur.</td></tr>
+<tr class="reveal-step" data-reveal-index="12" style="--step-delay:942ms;"><td><strong>16–24 Go</strong></td><td>RTX 4080/4090 24 Go</td><td><strong>Qwen3.8 27B</strong><br/><small>18 Go · vision · 256K</small></td><td><div class="model-command-wrap"><code>ollama run qwen3.8:27b</code><button aria-label="Copier la commande du modèle" class="copy-inline-btn" data-copy-text="ollama run qwen3.8:27b" title="Copier cette commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button></div></td><td>Meilleur généraliste dense de la gamme ; plus qualitatif que Qwen3.5 27B. À 16 Go, réduire fortement le contexte.</td></tr>
+<tr class="reveal-step" data-reveal-index="13" style="--step-delay:1013ms;"><td><strong>24–32 Go</strong></td><td>RTX 3090/4090/5090</td><td><strong>Ornith 1.5 35B-A3B</strong><br/><small>23 Go · vision · 256K</small></td><td><div class="model-command-wrap"><code>ollama run ornith-1.5:35b</code><button aria-label="Copier la commande du modèle" class="copy-inline-btn" data-copy-text="ollama run ornith-1.5:35b" title="Copier cette commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button></div></td><td>Ultime choix agentic coding : 18/18 tâches outils et 273 tok/s mesurés face à 77 tok/s pour Qwen3.8 sur RTX 5090 ; Nemotron 3.5 Lightning est une alternative throughput.</td></tr>
+<tr class="reveal-step" data-reveal-index="14" style="--step-delay:1084ms;"><td><strong>32–48 Go</strong></td><td>RTX 5090 ou multi-GPU</td><td><strong>Qwen3.8 27B</strong><br/><small>18 Go · vision · 256K</small></td><td><div class="model-command-wrap"><code>ollama run qwen3.8:27b</code><button aria-label="Copier la commande du modèle" class="copy-inline-btn" data-copy-text="ollama run qwen3.8:27b" title="Copier cette commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button></div></td><td>Choix généraliste et multimodal premium ; Ornith 35B reste préférable uniquement pour l'agentic coding.</td></tr>
+<tr class="reveal-step" data-reveal-index="15" style="--step-delay:1155ms;"><td><strong>48–64 Go</strong></td><td>station pro</td><td><strong>Qwen3-Coder-Next</strong><br/><small>52 Go · outils · 256K</small></td><td><div class="model-command-wrap"><code>ollama run qwen3-coder-next</code><button aria-label="Copier la commande du modèle" class="copy-inline-btn" data-copy-text="ollama run qwen3-coder-next" title="Copier cette commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button></div></td><td>Spécialiste dépôt/code avec 80B total et 3B actifs ; 64 Go recommandés pour garder une marge.</td></tr>
+<tr class="reveal-step" data-reveal-index="16" style="--step-delay:1226ms;"><td><strong>64–80 Go</strong></td><td>A6000, 2× GPU ou équivalent</td><td><strong>Gemma 4 31B Coding</strong><br/><small>64 Go BF16 · outils · 256K</small></td><td><div class="model-command-wrap"><code>ollama run gemma4:31b-coding-mtp-bf16</code><button aria-label="Copier la commande du modèle" class="copy-inline-btn" data-copy-text="ollama run gemma4:31b-coding-mtp-bf16" title="Copier cette commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button></div></td><td>Choix haut de gamme pour le code ; 80 Go sont recommandés pour conserver du contexte et de la marge.</td></tr>
+</tbody>
+</table>
+<div class="callout reveal-step" data-reveal-index="17" style="--step-delay:1417ms;">
+<span class="label">Comparaison à lire correctement</span>
+<p>Il n'existe pas de meilleur modèle absolu : le vainqueur dépend de la tâche. Sur un comparatif RTX 5090 en Q4_K_M et contexte 8K, Ornith 1.5 35B-A3B a résolu 18/18 tâches d'outils contre 18/18 pour Qwen3.8, mais à 273 contre 77 tok/s ; Ornith 9B a aussi résolu 18/18 à 193 tok/s. Ces chiffres proviennent d'un test comparatif récent, pas d'une garantie universelle. Les scores Ornith publiés par son équipe restent auto-déclarés : validez toujours sur votre propre dépôt. Les nouveautés cloud-only comme DeepSeek-V4-Flash et Kimi K3 sont exclues de cette matrice locale.</p>
+</div>
+<h3 class="h3 reveal-step" data-reveal-index="18" style="--step-delay:1368ms;">Vérifier que ça répond (identique sur les 3 OS)</h3>
+<div class="copy-block copy-command reveal-step" data-reveal-index="19" style="--step-delay:1439ms;"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-15" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-15"><code>ollama list                        <span class="cm"># liste les modèles téléchargés</span>
+ollama run ornith-1.5:9b "Réponds en une phrase : que fais-tu ?"
+
+<span class="cm"># Le serveur écoute par défaut sur http://127.0.0.1:11434</span>
+<span class="cm"># C'est cette adresse qu'OpenCode utilisera comme fournisseur local.</span></code></pre></div>
+<div class="callout reveal-step" data-reveal-index="20" style="--step-delay:1630ms;">
+<span class="label">Alternative graphique</span>
+<p><strong>LM Studio</strong> offre le chemin le plus court si vous préférez une interface au terminal : téléchargement des modèles en un clic et serveur compatible OpenAI intégré. Ollama reste préférable ici parce qu'il est scriptable et s'intègre directement à OpenCode.</p>
+</div>
+<div class="callout reveal-step" data-reveal-index="21" style="--step-delay:1701ms;">
+<span class="label">Les modèles se périment vite</span>
+<p>Les noms, tags, tailles et recommandations ci-dessus reflètent l’état du catalogue consulté fin août 2026. Avant une installation en groupe, vérifiez la disponibilité avec `ollama show &lt;nom&gt;` ou le catalogue officiel, et testez au moins une tâche représentative sur votre matériel. Un benchmark éditeur ou un test isolé ne remplace pas ce test local.</p>
+</div>
+</section>
+<section class="sec guide-section" data-reveal-count="7" id="opencode">
+<span class="sec-kicker">Partie 06 du cours</span>
+<h2 class="h2 reveal-step" data-reveal-index="0" style="--step-delay:90ms;">OpenCode — installation CLI &amp; desktop</h2>
+<p class="reveal-step" data-reveal-index="1" style="--step-delay:260ms;">Documentation et téléchargements officiels : <a href="https://opencode.ai/fr/download" rel="noopener noreferrer" target="_blank"><strong>opencode.ai/fr/download</strong></a> — téléchargez l’application Desktop Windows/macOS depuis cette page ; le CLI peut être installé séparément avec les commandes ci-dessous. Le CLI et le Desktop partagent la même configuration globale.</p>
+<div class="os-grid">
+<div class="os-card reveal-step" data-reveal-index="2" style="--step-delay:430ms;"><h4>Windows <span class="tag tag-win">PowerShell</span></h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-16" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-16"><code>npm install -g opencode-ai
+<span class="cm"># Alternative : choco install opencode / scoop install opencode
+# WSL recommandé pour la compatibilité maximale</span></code></pre></div></div>
+<div class="os-card reveal-step" data-reveal-index="3" style="--step-delay:600ms;"><h4>macOS <span class="tag tag-mac">Terminal</span></h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-17" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-17"><code>brew install anomalyco/tap/opencode
+<span class="cm"># Le tap OpenCode reçoit généralement les versions les plus récentes</span></code></pre></div></div>
+<div class="os-card reveal-step" data-reveal-index="4" style="--step-delay:770ms;"><h4>Linux <span class="tag tag-linux">Terminal</span></h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-18" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-18"><code>curl -fsSL https://opencode.ai/install | bash
+<span class="cm"># ou npm install -g opencode-ai</span></code></pre></div></div>
+</div>
+<div class="copy-block copy-command reveal-step" data-reveal-index="5" style="--step-delay:940ms;"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-19" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-19"><code><span class="cm"># Vérifier l'installation, sur les 3 OS</span>
+opencode --version</code></pre></div>
+<p>Installez ensuite OpenCode Desktop depuis le canal officiel si vous souhaitez l’interface graphique. Le Desktop réutilise la configuration globale du moteur OpenCode ; après une modification importante, redémarrer l’application reste un bon réflexe de diagnostic.</p>
+<div class="callout reveal-step" data-reveal-index="6" style="--step-delay:1230ms;"><span class="label">OpenCode stable vs V2 — point de compatibilité</span><p>La branche stable documente `instructions` comme moyen recommandé de charger des fichiers d’instructions externes. La documentation V2 actuelle précise cependant que ce tableau est encore conservé dans la configuration sans être résolu vers le contexte du modèle. Pour une stack portable aujourd’hui, conservez donc le fallback global AGENTS.md tant que V2 n’a pas implémenté cette résolution.</p></div></section>
+<section class="sec guide-section" data-reveal-count="14" id="agent-auto">
+<span class="sec-kicker">Partie 06 du cours</span>
+<h2 class="h2 reveal-step" data-reveal-index="0" style="--step-delay:90ms;">Configurer l'agent « auto »</h2>
+<div class="callout danger reveal-step" data-reveal-index="2" style="--step-delay:460ms;">
+<span class="label">Danger — à lire avant d'activer</span>
+<p>`permission: {"": "allow"}` supprime les demandes de confirmation pour cet agent personnalisé. On le conserve volontairement dans ce cours : il montre comment créer un agent primaire réutilisable depuis le CLI et le Desktop. Réservez-le à un dépôt Git propre, une branche dédiée et un environnement sans identifiants de production. Git protège les fichiers suivis, mais ne restaure pas les effets externes (base distante, suppression hors dépôt, publication, etc.).</p>
+</div>
+<h3 class="h3 reveal-step" data-reveal-index="3" style="--step-delay:465ms;">1. Localiser / créer le fichier de config globale</h3>
+<div class="os-grid">
+<div class="os-card reveal-step" data-reveal-index="4" style="--step-delay:590ms;"><h4>Windows <span class="tag tag-win">PowerShell</span></h4><div class="copy-block copy-prompt"><button aria-label="Copier le prompt" class="copy-btn" data-copy-target="copy-block-5" title="Copier le prompt" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-5"><code>New-Item -ItemType Directory -Force `
+  "$HOME\.config\opencode"
+<span class="cm"># fichier : C:\Users\&lt;UTILISATEUR&gt;\.config\opencode\opencode.jsonc</span></code></pre></div></div>
+<div class="os-card reveal-step" data-reveal-index="5" style="--step-delay:715ms;"><h4>macOS <span class="tag tag-mac">Terminal</span></h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-20" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-20"><code>mkdir -p ~/.config/opencode
+<span class="cm"># fichier : ~/.config/opencode/opencode.jsonc</span></code></pre></div></div>
+<div class="os-card reveal-step" data-reveal-index="6" style="--step-delay:840ms;"><h4>Linux <span class="tag tag-linux">Terminal</span></h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-21" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-21"><code>mkdir -p ~/.config/opencode
+<span class="cm"># fichier : ~/.config/opencode/opencode.jsonc</span></code></pre></div></div>
+</div>
+<h3 class="h3 reveal-step" data-reveal-index="7" style="--step-delay:965ms;">2. Ajouter l'agent (ne pas remplacer un bloc "agent" existant)</h3>
+<p class="reveal-step" data-reveal-index="1" style="--step-delay:215ms;">Si la clé <code>"agent"</code> existe déjà dans le fichier, n'ajouter que la sous-clé <code>"auto"</code> à l'intérieur — sans supprimer les autres agents déjà déclarés.</p>
+<div class="copy-block copy-prompt reveal-step" data-reveal-index="8" style="--step-delay:1090ms;"><button aria-label="Copier le prompt" class="copy-btn" data-copy-target="copy-block-6" title="Copier le prompt" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-6"><code>{
+  "agent": {
+    "auto": {
+      "description": "DANGEROUS — runs all tools without permission prompts.",
+      "mode": "primary",
+      "color": "error",
+      "app_hidden": false,
+      "cli_hidden": false,
+      "permission": { "": "allow" }
+    }
+  }
+}</code></pre></div>
+<h3 class="h3 reveal-step" data-reveal-index="9" style="--step-delay:1215ms;">3. Vérifier que la configuration est chargée</h3>
+<div class="os-grid">
+<div class="os-card reveal-step" data-reveal-index="10" style="--step-delay:1340ms;"><h4>Windows <span class="tag tag-win">PowerShell</span></h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-22" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-22"><code>opencode debug config | Select-String '"auto"'</code></pre></div></div>
+<div class="os-card reveal-step" data-reveal-index="11" style="--step-delay:1465ms;"><h4>macOS / Linux <span class="tag tag-linux">Terminal</span></h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-23" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-23"><code>opencode debug config | grep '"auto"'</code></pre></div></div>
+<div class="os-card reveal-step" data-reveal-index="12" style="--step-delay:1590ms;"><h4>Puis</h4><pre><code><span class="cm"># Redémarrer OpenCode Desktop.
+# L'agent "auto" apparaît dans le sélecteur d'agents.</span></code></pre></div>
+</div>
+<div class="callout reveal-step" data-reveal-index="13" style="--step-delay:1835ms;"><span class="label">Pourquoi garder cette méthode</span><p>OpenCode propose aussi des mécanismes natifs d’auto-approbation, mais cet agent personnalisé reste pertinent pédagogiquement : il montre la structure d’un agent primaire, son exposition dans les deux interfaces et la façon de versionner une politique de permissions.</p></div></section>
+<section class="sec guide-section" data-reveal-count="9" id="mcp-obsidian">
+<span class="sec-kicker">Partie 06 du cours</span>
+<h2 class="h2 reveal-step" data-reveal-index="0" style="--step-delay:90ms;">Brancher le MCP Obsidian</h2>
+<p class="reveal-step" data-reveal-index="1" style="--step-delay:215ms;">Local REST API inclut désormais directement un serveur MCP. On évite donc un package MCP tiers et on connecte OpenCode à l’endpoint HTTPS local du plugin. Ajoutez le bloc `mcp` dans le même `opencode.jsonc`, à côté du bloc `agent`, sans écraser les autres serveurs.</p>
+<pre class="reveal-step" data-reveal-index="2" style="--step-delay:340ms;"><code>{
+  "mcp": {
+    "obsidian": {
+      "type": "remote",
+      "url": "https://127.0.0.1:27124/mcp/",
+      "enabled": true,
+      "oauth": false,
+      "headers": {
+        "Authorization": "Bearer {env:OBSIDIAN_API_KEY}"
+      }
+    }
+  }
+}</code></pre>
+<table><tbody><tr class="reveal-step" data-reveal-index="3" style="--step-delay:465ms;"><th>Élément</th><th>Valeur / action</th></tr><tr class="reveal-step" data-reveal-index="4" style="--step-delay:590ms;"><td>Endpoint MCP</td><td>https://127.0.0.1:27124/mcp/</td></tr><tr class="reveal-step" data-reveal-index="5" style="--step-delay:715ms;"><td>Authentification</td><td>Authorization: Bearer $OBSIDIAN_API_KEY</td></tr><tr class="reveal-step" data-reveal-index="6" style="--step-delay:840ms;"><td>Certificat</td><td>Auto-signé : télécharger/faire confiance au certificat Local REST API dans l’OS ou le client.</td></tr><tr class="reveal-step" data-reveal-index="7" style="--step-delay:965ms;"><td>Fallback atelier</td><td>HTTP 127.0.0.1:27123 uniquement si nécessaire et explicitement activé dans le plugin.</td></tr></tbody></table>
+<p>Redémarrez OpenCode puis vérifiez le serveur avec `opencode mcp list`. Demandez ensuite à l’agent de lire une note non sensible contenant une valeur unique que le modèle ne peut pas deviner. Si HTTPS échoue, diagnostiquez d’abord la confiance du certificat avant de basculer vers l’endpoint HTTP local.</p>
+<div class="callout reveal-step" data-reveal-index="8" style="--step-delay:1210ms;"><span class="label">HTTPS est le chemin recommandé</span><p>Le serveur MCP officiel de Local REST API écoute sur https://127.0.0.1:27124/mcp/. Le certificat est auto-signé : il est normal qu’un client le refuse tant qu’il n’a pas été approuvé. Le plugin permet de récupérer le certificat local ; ne désactivez la vérification TLS qu’en dernier recours sur localhost.</p></div></section>
+<section class="sec guide-section" data-reveal-count="13" id="stack">
+<span class="sec-kicker">Partie 06 du cours</span>
+<h2 class="h2 reveal-step" data-reveal-index="0" style="--step-delay:90ms;">Installer ai-native-dev-stack</h2>
+<p class="reveal-step" data-reveal-index="1" style="--step-delay:215ms;">Dépôt : <code>github.com/Rwanbt/ai-native-dev-stack</code> — méthode d'ingénierie, hooks de maintenance automatique et skills, versionnés dans un seul dépôt cloné une fois pour toutes.</p>
+<h3 class="h3 reveal-step" data-reveal-index="2" style="--step-delay:340ms;">1. Cloner (identique sur les 3 OS)</h3>
+<div class="copy-block copy-command reveal-step" data-reveal-index="3" style="--step-delay:465ms;"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-24" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-24"><code>git clone https://github.com/Rwanbt/ai-native-dev-stack.git
+cd ai-native-dev-stack</code></pre></div>
+<h3 class="h3 reveal-step" data-reveal-index="4" style="--step-delay:590ms;">2. Installer méthode, skills et agents</h3>
+<div class="os-grid">
+<div class="os-card reveal-step" data-reveal-index="5" style="--step-delay:715ms;"><h4>Linux <span class="tag tag-linux">Terminal</span></h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-25" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-25">bash scripts/setup-agents.sh
+# Option : --dry-run puis --check</pre></div></div>
+<div class="os-card reveal-step" data-reveal-index="6" style="--step-delay:840ms;"><h4>macOS <span class="tag tag-mac">Terminal</span></h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-26" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-26">bash scripts/setup-agents.sh
+# même installateur Python cross-platform</pre></div></div>
+<div class="os-card reveal-step" data-reveal-index="7" style="--step-delay:965ms;"><h4>Windows <span class="tag tag-win">PowerShell</span></h4><div class="copy-block copy-command"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-27" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-27">pwsh -NoProfile -File scripts/setup-agents.ps1
+# -DryRun puis -Check disponibles</pre></div></div>
+</div>
+<div class="callout reveal-step" data-reveal-index="8" style="--step-delay:1210ms;">
+<span class="label">Solution de repli manuelle (tout OS)</span>
+<p>Si le script ne convient pas à votre environnement, gardez le dépôt cloné comme source canonique. Pour OpenCode stable, le champ `instructions` de `opencode.json`/`opencode.jsonc` est l’approche recommandée pour charger un fichier externe. Attention toutefois : la documentation OpenCode V2 du 29 août 2026 indique que ce champ est actuellement parsé mais pas encore résolu en source d’instructions. Le mécanisme installé aujourd’hui par ai-native-dev-stack — un `~/.config/opencode/AGENTS.md` global qui ordonne explicitement de lire le fichier canonique — doit donc rester comme fallback de compatibilité tant que V2 n’a pas fermé cet écart. Ne copiez jamais physiquement le contenu d’AGENTS.md dans plusieurs emplacements.</p>
+</div>
+<h3 class="h3 reveal-step" data-reveal-index="9" style="--step-delay:1215ms;">3. Installer le stack de maintenance sur un projet cible</h3>
+<div class="copy-block copy-command reveal-step" data-reveal-index="10" style="--step-delay:1340ms;"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-28" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-28"><code># Linux / macOS
+cd /chemin/vers/votre-projet
+bash /chemin/vers/ai-native-dev-stack/install.sh
+
+# Windows PowerShell (sans Git Bash)
+cd C:\chemin\vers\votre-projet
+python C:\chemin\vers\ai-native-dev-stack\install.py</code></pre></div>
+<h3 class="h3 reveal-step" data-reveal-index="11" style="--step-delay:1465ms;">4. Vérifier le transfert</h3>
+<div class="copy-block copy-command reveal-step" data-reveal-index="12" style="--step-delay:1590ms;"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-29" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-29"><code># Vérifier l'installation globale
+# Linux / macOS
+bash scripts/setup-agents.sh --check
+
+# Windows
+pwsh -NoProfile -File scripts/setup-agents.ps1 -Check
+
+# Puis, dans l'agent :
+/verify-ai-docs
+# → doit signaler un état opérationnel ou lister précisément les écarts</code></pre></div>
+</section>
+<section class="sec guide-section" data-reveal-count="9" id="opendesign">
+<span class="sec-kicker">Partie 07 du cours</span>
+<h2 class="h2 reveal-step" data-reveal-index="0" style="--step-delay:90ms;">OpenDesign — installation &amp; prompt pour portage Linux</h2>
+<p class="reveal-step" data-reveal-index="1" style="--step-delay:215ms;">Il n'existe pas de version Linux directement téléchargeable dans le canal utilisé ici. Ce prompt reconstruit une installation Ubuntu réellement testée sous Wayland avec l'AppImage produite depuis le dépôt officiel <code>nexu-io/open-design</code>.</p>
+<p>Téléchargement officiel pour les autres systèmes : <a href="https://open-design.ai/fr/" rel="noopener noreferrer" target="_blank"><strong>open-design.ai/fr</strong></a>. Utilisez cette page pour télécharger l'application Windows ou macOS et consulter la documentation officielle. Sous Linux, suivez le prompt ci-dessous pour construire l'AppImage depuis les sources.</p>
+<div class="callout reveal-step" data-reveal-index="2" style="--step-delay:460ms;">
+<span class="label">Recette testée — à pinner avant le cours</span>
+<p>Cette recette a été validée avec Open Design 0.20.3, Node 24.19.0 et pnpm 10.33.2. Avant une installation collective, testez le dépôt la veille et notez le commit exact qui fonctionne. Le jour du cours, utilisez ce commit/tag plutôt que HEAD afin qu’une mise à jour upstream ne casse pas quinze installations simultanément.</p>
+</div>
+<h3 class="h3 reveal-step" data-reveal-index="3" style="--step-delay:465ms;">Prompt complet à copier-coller pour installation sur Linux</h3>
+<div class="copy-block copy-command reveal-step" data-reveal-index="4" style="--step-delay:590ms;"><button aria-label="Copier la commande" class="copy-btn" data-copy-target="copy-block-30" title="Copier la commande" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-30"><code>Tu es mon agent d'installation local sur Ubuntu. Installe Open Design depuis ses sources officielles, construis son AppImage Linux, installe-la pour l'utilisateur courant et crée une entrée de menu ainsi qu'un raccourci Bureau.
+
+=== CONTRAINTES ===
+- Utilise uniquement https://github.com/nexu-io/open-design.
+- N'utilise pas le repackage tiers « open-design-linux ».
+- Utilise Node 24 et pnpm 10.33.2. Ne passe pas à pnpm 11.
+- N'affiche aucune clé API, aucun token ni aucun secret.
+- Inspecte avant d'écraser. En cas d'échec, arrête l'étape, garde les logs et explique.
+
+=== 1. PRÉ-REQUIS ===
+sudo apt update
+sudo apt install -y git curl build-essential python3 desktop-file-utils xdg-user-dirs
+sudo apt install -y gtk-update-icon-cache || true
+
+=== 2. NODE 24 AVEC NVM ===
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+source ~/.bashrc
+nvm install 24
+nvm use 24
+nvm alias default 24
+node --version
+# Résultat testé : v24.19.0. Le warning demandant v24.18.0 peut être non bloquant.
+
+=== 3. SOURCES OFFICIELLES ===
+mkdir -p ~/Applications
+cd ~/Applications
+if [ -d ~/Applications/open-design/.git ]; then cd ~/Applications/open-design; else git clone https://github.com/nexu-io/open-design.git ~/Applications/open-design; cd ~/Applications/open-design; fi
+cd ~/Applications/open-design
+# Avant le cours : noter le commit validé avec `git rev-parse HEAD`.
+# Le jour J : si un commit de référence a été communiqué, `git checkout &lt;COMMIT_TESTE&gt;`.
+
+=== 4. PNPM ET DÉPENDANCES ===
+corepack enable
+corepack prepare pnpm@10.33.2 --activate
+pnpm --version
+pnpm install --frozen-lockfile
+# Unsupported engine et Ignored build scripts peuvent être non bloquants.
+# Ne lance pas pnpm approve-builds uniquement à cause de ces warnings.
+
+=== 5. BUILD APPIMAGE ===
+pnpm tools-pack linux build --to appimage --namespace default
+# Le message POSTHOG_* missing; skipping upload est normal en build local.
+# AppImage attendue :
+# ~/Applications/open-design/.tmp/tools-pack/out/linux/namespaces/default/builder/Open Design-default.AppImage
+
+=== 6. INSTALLATION UTILISATEUR ===
+pnpm tools-pack linux install --namespace default
+ls -lh ~/.local/bin/Open-Design.default.AppImage
+ls -lh ~/.local/share/applications/open-design-default.desktop
+ls -lh ~/.local/share/icons/hicolor/512x512/apps/open-design-default.png
+# iconCache: missing n'est pas bloquant si ces fichiers existent.
+
+=== 7. LANCEMENT VALIDÉ ===
+# N'utilise pas tools-pack start comme preuve unique : il peut expirer sur
+# desktop-root.json not written within 60s malgré un démarrage valide.
+~/.local/bin/Open-Design.default.AppImage --appimage-extract-and-run --no-sandbox
+# Vérifie : IPC server listening, runtime created, dom-ready,
+# did-finish-load, loadURL success et onboarding affiché.
+
+=== 8. RACCOURCI BUREAU ===
+DESKTOP_DIR="$(xdg-user-dir DESKTOP)"
+cp ~/.local/share/applications/open-design-default.desktop "$DESKTOP_DIR/Open-Design.desktop"
+sed -i "s|^Exec=.*|Exec=$HOME/.local/bin/Open-Design.default.AppImage --appimage-extract-and-run --no-sandbox %U|" "$DESKTOP_DIR/Open-Design.desktop"
+sed -i "s|^Icon=.*|Icon=$HOME/.local/share/icons/hicolor/512x512/apps/open-design-default.png|" "$DESKTOP_DIR/Open-Design.desktop"
+chmod +x "$DESKTOP_DIR/Open-Design.desktop"
+gio set "$DESKTOP_DIR/Open-Design.desktop" metadata::trusted true || true
+update-desktop-database ~/.local/share/applications || true
+gtk-update-icon-cache -f -t ~/.local/share/icons/hicolor || true
+# Si nécessaire : clic droit → Autoriser le lancement.
+
+=== 9. OPENCODE ET DIAGNOSTIC ===
+which opencode
+opencode --version
+OD_DESKTOP_LOG_ECHO=1 ELECTRON_ENABLE_LOGGING=1 \
+~/.local/bin/Open-Design.default.AppImage --appimage-extract-and-run --no-sandbox \
+2&gt;&amp;1 | tee ~/open-design-start.log
+# Les warnings Wayland/Chromium, DBus et updater unsupported-platform
+# peuvent être ignorés s'ils n'empêchent pas l'interface de charger.
+
+=== 10. MISE À JOUR ===
+cd ~/Applications/open-design
+git pull --ff-only
+corepack enable
+corepack prepare pnpm@10.33.2 --activate
+pnpm install --frozen-lockfile
+pnpm tools-pack linux build --to appimage --namespace default
+pnpm tools-pack linux install --namespace default
+
+=== 11. DÉSINSTALLATION ===
+cd ~/Applications/open-design
+pnpm tools-pack linux uninstall --namespace default
+DESKTOP_DIR="$(xdg-user-dir DESKTOP)"
+rm -f "$DESKTOP_DIR/Open-Design.desktop"
+# Supprimer les sources uniquement après confirmation :
+# rm -rf ~/Applications/open-design
+
+À la fin, récapitule les versions, les chemins créés, le résultat du lancement et les warnings observés. Ne déclare pas l'installation réussie sans vérifier que l'AppImage atteint l'interface.</code></pre></div>
+<h3 class="h3 reveal-step" data-reveal-index="5" style="--step-delay:715ms;">Connexion au même moteur OpenCode</h3>
+<ul class="checklist">
+<li class="reveal-step" data-reveal-index="6" style="--step-delay:840ms;">Vérifier que le binaire OpenCode utilisé par OpenDesign correspond à <code>opencode --version</code>.</li>
+<li class="reveal-step" data-reveal-index="7" style="--step-delay:965ms;">Les variables d'environnement du CLI restent valables dans OpenDesign, selon le contexte de lancement graphique.</li>
+<li class="reveal-step" data-reveal-index="8" style="--step-delay:1090ms;">Les règles ajoutées à <code>AGENTS.md</code> s'appliquent aux deux surfaces sans configuration séparée.</li>
+</ul>
+</section>
+<section class="sec guide-section" data-reveal-count="14" id="prompts-opencode">
+<span class="sec-kicker">Avant la checklist finale</span>
+<h2 class="h2 reveal-step" data-reveal-index="0" style="--step-delay:90ms;">Prompts prêts à copier-coller dans OpenCode</h2>
+<p class="reveal-step" data-reveal-index="1" style="--step-delay:215ms;">Après l'installation d'<strong>OpenCode CLI</strong>, d'<strong>OpenCode Desktop</strong> et d'<strong>Obsidian</strong>, utilisez ces prompts dans une session OpenCode. Ils demandent à l'agent de lire l'état réel de la machine et du projet avant d'écrire quoi que ce soit.</p>
+<div class="callout danger reveal-step" data-reveal-index="2" style="--step-delay:460ms;"><span class="label">Règle commune</span><p>Ne supprime, n'écrase et ne publie rien sans montrer d'abord le plan d'action, les fichiers touchés et les commandes prévues. Vérifie l'OS, le dossier courant, la branche Git et l'état du dépôt avant toute mutation.</p></div>
+<h3 class="h3 reveal-step" data-reveal-index="3" style="--step-delay:465ms;">Prompt 1 — diagnostic puis configuration « auto » (chaînage automatique)</h3>
+<div class="copy-block copy-prompt reveal-step" data-reveal-index="4" style="--step-delay:590ms;"><button aria-label="Copier le prompt" class="copy-btn" data-copy-target="copy-block-0" title="Copier le prompt" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-0"><code>Tu es mon agent de bootstrap local dans OpenCode.
+Objectif : préparer ce poste pour OpenCode CLI + Desktop, Obsidian et ai-native-dev-stack, puis configurer l’agent personnalisé « auto » partagé par le CLI et le Desktop — diagnostic puis configuration enchaînés sans validation intermédiaire.
+
+=== PHASE 1 — DIAGNOSTIC (lecture seule) ===
+
+Détecte l'OS, le shell, le dossier courant et les versions de git, opencode, node et python. Localise la configuration OpenCode globale et le vault Obsidian. Vérifie Local REST API sans afficher sa clé, Ollama et l'existence d'ai-native-dev-stack.
+
+Affiche le diagnostic en trois colonnes : déjà installé, absent, à vérifier manuellement. Ne fais que lire — n'écris rien à ce stade.
+
+=== PHASE 2 — CONFIGURATION « AUTO » (enchaînement automatique) ===
+
+Enchaîne immédiatement, sans attendre de validation :
+1. Travaille uniquement dans la configuration globale identifiée.
+2. Si un bloc agent existe, fusionne seulement la sous-clé nécessaire : ne remplace jamais les autres agents.
+3. Vérifie la syntaxe JSONC, lance la commande de debug de configuration et confirme que « auto » est chargé.
+4. Affiche le chemin exact, le diff prévu, les risques et la commande de rollback.
+5. Ne committe et ne pousse rien.
+
+Rappel : conserve volontairement l’agent personnalisé « auto » ; ne le remplace pas par `--auto`. Il sert ici à démontrer la création d’un agent primaire réutilisable. Réserve-le à une branche dédiée et à un environnement sans secrets de production.
+
+=== SORTIE ATTENDUE ===
+
+Diagnostic (Phase 1) puis résumé concis des modifications effectuées (Phase 2), avec chemin exact du fichier et commande de debug ayant confirmé le chargement de l'agent « auto ».</code></pre></div>
+<h3 class="h3 reveal-step" data-reveal-index="5" style="--step-delay:715ms;">Prompt 2 — brancher Obsidian et structurer le vault</h3>
+<div class="copy-block copy-prompt reveal-step" data-reveal-index="6" style="--step-delay:840ms;"><button aria-label="Copier le prompt" class="copy-btn" data-copy-target="copy-block-1" title="Copier le prompt" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-1"><code>Configure le MCP natif HTTPS de Local REST API pour OpenCode et prépare l’architecture documentaire du vault.
+
+Vérifie Local REST API sans afficher la clé. Utilise en priorité `https://127.0.0.1:27124/mcp/` avec `Authorization: Bearer {env:OBSIDIAN_API_KEY}`. Vérifie ou installe la confiance du certificat auto-signé ; n’utilise l’HTTP 127.0.0.1:27123 qu’en repli local explicite. Ajoute ou fusionne le bloc MCP sans écraser les autres serveurs. Teste la connexion en lisant une note non sensible contenant une valeur unique.
+
+Inspecte les dossiers existants avant toute création. Propose ensuite une architecture minimale : INDEX, LOG, _memory, projets, décisions et handoffs. Crée uniquement les éléments validés, avec frontmatter et wikilinks conformes aux conventions du vault. Termine par une vérification de lecture via MCP.</code></pre></div>
+<h3 class="h3 reveal-step" data-reveal-index="7" style="--step-delay:965ms;">Prompt 3 — installer Graphify et cartographier le projet</h3>
+<div class="copy-block copy-prompt reveal-step" data-reveal-index="8" style="--step-delay:1090ms;"><button aria-label="Copier le prompt" class="copy-btn" data-copy-target="copy-block-2" title="Copier le prompt" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-2"><code>Installe et initialise graphify sur le projet courant.
+
+Vérifie le dépôt, la branche Git et l'état dirty. Si graphify est absent, propose la commande adaptée à l'OS sans l'exécuter avant validation. Génère le graphe en excluant node_modules, target, build, dist, vendor et les secrets.
+
+Lis GRAPH_REPORT.md et graph.json. Résume les modules centraux, dépendances entrantes, cycles éventuels, zones à risque et fichiers non analysés. Cherche les consommateurs et call sites : un helper testé ne prouve pas que la fonctionnalité est branchée. Après modification, utilise graphify update.</code></pre></div>
+<h3 class="h3 reveal-step" data-reveal-index="9" style="--step-delay:1215ms;">Prompt 4 — installer ai-native-dev-stack, skills et hooks</h3>
+<div class="copy-block copy-prompt reveal-step" data-reveal-index="10" style="--step-delay:1340ms;"><button aria-label="Copier le prompt" class="copy-btn" data-copy-target="copy-block-3" title="Copier le prompt" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-3"><code>Installe "https://github.com/Rwanbt/ai-native-dev-stack" sur ce projet et rends ses règles opérationnelles.
+
+Vérifie si le dépôt est déjà cloné. Lis son README, AGENTS.md, scripts d'installation, skills et hooks avant exécution. Présente les fichiers qui seront créés ou modifiés. Utilise `scripts/setup-agents.ps1` sous Windows PowerShell et `scripts/setup-agents.sh` sous Linux/macOS. Commence si possible par le mode dry-run, puis vérifie avec le mode check. Si l’OS ne permet pas le script, propose l’entrée Python cross-platform documentée.
+
+Garde AGENTS.md comme source canonique. Pour OpenCode, implémente une compatibilité à deux chemins : `instructions` quand la version utilisée le résout réellement, et maintien du `~/.config/opencode/AGENTS.md` global géré comme fallback pour OpenCode V2 tant que `instructions` n’est pas injecté au modèle. Pour Claude/Codex, respecte leur mécanisme natif. Ne duplique jamais le contenu canonique. Active un hook de format ou de commit et vérifie son exécution sur un changement sans danger. Lance verify-ai-docs. Ne modifie pas les fichiers métier, ne committe et ne pousse rien. Termine par un rapport des skills, hooks, vérifications et limites restantes.</code></pre></div>
+<h3 class="h3 reveal-step" data-reveal-index="11" style="--step-delay:1465ms;">Prompt 5 — créer un dépôt GitHub privé pour le vault et le synchroniser</h3>
+<div class="copy-block copy-prompt reveal-step" data-reveal-index="12" style="--step-delay:1590ms;"><button aria-label="Copier le prompt" class="copy-btn" data-copy-target="copy-block-4" title="Copier le prompt" type="button"><span aria-hidden="true" class="copy-icon">⧉</span><span class="copy-label">Copier</span></button><pre class="" id="copy-block-4"><code>Tu es mon agent de configuration Git dans OpenCode.
+Objectif : créer un dépôt GitHub privé pour le vault Obsidian actuel, y lier le vault local et activer la synchronisation automatique, en sécurité.
+
+=== PHASE 1 — DIAGNOSTIC ===
+
+Détecte l'OS et le shell. Localise le vault Obsidian actif et confirme qu'il contient déjà un dépôt Git initialisé. Vérifie la présence du binaire gh (GitHub CLI) et l'authentification GitHub actuelle, sans afficher aucun token.
+
+Affiche : emplacement du vault, statut Git (clean ou modified), branche courante, remote configuré, authentification GitHub disponible ou manquante.
+
+=== PHASE 2 — CRÉATION DU DÉPÔT PRIVÉ ===
+
+Si aucun remote n'est configuré :
+1. Propose le nom du dépôt (par défaut le nom du dossier du vault) en PRIVATE.
+2. Préfère GitHub CLI : `gh auth status`, puis `gh auth login` si nécessaire, puis `gh repo create NOM --private --source=. --remote=origin --push`.
+3. Ne place jamais un Personal Access Token dans l'URL d'un remote, une commande copiée dans l'historique ou un fichier de configuration. Si `gh` n'est pas disponible, utilise Git Credential Manager / le mécanisme d'authentification Git standard de l'OS.
+4. Le remote doit rester propre, par exemple `https://github.com/USER/NOM.git`.
+5. N'accorde que les droits nécessaires et ne journalise aucun secret.
+6. Affiche le diff de remote et la commande de rollback `git remote remove origin`.
+
+=== PHASE 3 — SYNCHRONISATION OBSIDIAN GIT ===
+
+Vérifie que le plugin communautaire Obsidian Git est installé et actif. Configure :
+- Vault backup interval : 30 (minutes)
+- Auto-push on interval : activé
+- Commit message template : vault: auto-sync {{date}} {{time}}
+- Exclusions : .obsidian/workspace.json, .trash/, fichiers de plus de 10 Mo
+
+Vérifie qu'un premier commit/push manuel fonctionne et que la page GitHub du dépôt affiche bien les notes.
+
+=== SORTIE ATTENDUE ===
+
+Diagnostic Phase 1, dépôt privé créé et lié (Phase 2), plugin Obsidian Git configuré et validé par un push manuel concluant (Phase 3). Aucune clé API ni token affiché.</code></pre></div>
+<div class="callout reveal-step" data-reveal-index="13" style="--step-delay:1835ms;"><span class="label">Sorties attendues</span><p><code>AGENTS.md</code> référencé, skills actifs, hook vérifié, graphe Graphify lisible, architecture de vault claire, dépôt GitHub privé lié au vault et premier push manuel concluant.</p></div>
+</section>
+<section class="sec guide-section" data-reveal-count="9" id="api-gratuites">
+<span class="sec-kicker">Au-delà du local</span>
+<h2 class="h2 reveal-step" data-reveal-index="0" style="--step-delay:90ms;">Fournisseurs avec free tier / crédits de découverte — à vérifier le jour J</h2>
+<p class="reveal-step" data-reveal-index="1" style="--step-delay:215ms;">Ces offres permettent souvent de tester des modèles cloud à coût nul ou très faible, mais leurs quotas, régions, conditions d’éligibilité et catalogues changent fréquemment. Considérez cette section comme une liste de pistes, pas comme une promesse de gratuité permanente.</p>
+<div class="api-grid">
+<div class="api-card reveal-step" data-reveal-index="2" style="--step-delay:340ms;">
+<span class="api-badge">Offre découverte — à vérifier</span>
+<h4>NVIDIA build</h4>
+<p class="api-tagline">Modèles open-weight (Llama, Mistral, Stable Diffusion…) exécutés sur les GPU NVIDIA via une API compatible OpenAI. Catalogue mis à jour régulièrement.</p>
+<a class="api-link" href="https://build.nvidia.com/" rel="noopener noreferrer" target="_blank">build.nvidia.com →</a>
+</div>
+<div class="api-card reveal-step" data-reveal-index="3" style="--step-delay:465ms;">
+<span class="api-badge">Free tier — à vérifier</span>
+<h4>Google AI Studio</h4>
+<p class="api-tagline">Accès direct à Gemini en mode gratuit : multimodal, long contexte, génération de clé API en un clic. Idéal pour prototyper avant une mise en production.</p>
+<a class="api-link" href="https://ai.google.dev/aistudio?hl=fr" rel="noopener noreferrer" target="_blank">ai.google.dev/aistudio →</a>
+</div>
+<div class="api-card reveal-step" data-reveal-index="4" style="--step-delay:590ms;">
+<span class="api-badge">Free tier — à vérifier</span>
+<h4>Mistral AI — La Plateforme</h4>
+<p class="api-tagline">Tarifs et limites du tier gratuit de Mistral : modèles open-weight et instruct européens, hébergés en France pour la plupart.</p>
+<a class="api-link" href="https://mistral.ai/fr/pricing/" rel="noopener noreferrer" target="_blank">mistral.ai/fr/pricing →</a>
+</div>
+<div class="api-card reveal-step" data-reveal-index="5" style="--step-delay:715ms;">
+<span class="api-badge">Quota gratuit — à vérifier</span>
+<h4>Groq Cloud</h4>
+<p class="api-tagline">Inférence ultra-rapide sur LPU pour Llama, Mixtral, Gemma et Whisper — crédits gratuits quotidiens, latence très basse.</p>
+<a class="api-link" href="https://groq.com/" rel="noopener noreferrer" target="_blank">groq.com →</a>
+</div>
+<div class="api-card reveal-step" data-reveal-index="6" style="--step-delay:840ms;">
+<span class="api-badge">Free tier — à vérifier</span>
+<h4>Cerebras Inference</h4>
+<p class="api-tagline">Inférence Llama sur puce wafer-scale Cerebras — tier gratuit avec quotas journaliers, latence sub-seconde.</p>
+<a class="api-link" href="https://www.cerebras.ai/pricing" rel="noopener noreferrer" target="_blank">cerebras.ai/pricing →</a>
+</div>
+<div class="api-card reveal-step" data-reveal-index="7" style="--step-delay:965ms;">
+<span class="api-badge">Modèles gratuits — à vérifier</span>
+<h4>OpenRouter</h4>
+<p class="api-tagline">Routeur unifié vers de nombreux modèles (Llama, Mistral, Gemma, DeepSeek…) via une API compatible OpenAI — modèles gratuits listés sur /free.</p>
+<a class="api-link" href="https://openrouter.ai/openrouter/free" rel="noopener noreferrer" target="_blank">openrouter.ai →</a>
+</div>
+</div>
+<div class="callout reveal-step" data-reveal-index="8" style="--step-delay:1210ms;"><span class="label">Bonne pratique</span><p>Tout appel à une API cloud envoie vos prompts et pièces jointes hors de la machine. Vérifiez le free tier et les conditions le jour du cours, puis gardez Ollama pour les données sensibles ou quand l’absence de réseau est une contrainte.</p></div>
+</section>
+<section class="sec guide-section" data-reveal-count="13" id="checklist">
+<span class="sec-kicker">Fin du guide</span>
+<h2 class="h2 reveal-step" data-reveal-index="0" style="--step-delay:90ms;">Checklist finale — poste de travail souverain</h2>
+<ul class="checklist" style="font-size:18px;">
+<li class="reveal-step" data-reveal-index="1" style="--step-delay:215ms;">Obsidian installé, vault créé, versionné avec Git et lié à un dépôt GitHub privé</li>
+<li class="reveal-step" data-reveal-index="2" style="--step-delay:340ms;">Local REST API actif, MCP HTTPS `https://127.0.0.1:27124/mcp/` testé, clé en variable d’environnement et certificat approuvé</li>
+<li class="reveal-step" data-reveal-index="3" style="--step-delay:465ms;">Graphify installé et projet indexé (<code>graphify-out/GRAPH_REPORT.md</code> généré)</li>
+<li class="reveal-step" data-reveal-index="4" style="--step-delay:590ms;">Ollama installé, au moins un modèle téléchargé et testé (<code>ollama run ornith-1.5:9b</code>)</li>
+<li class="reveal-step" data-reveal-index="5" style="--step-delay:715ms;">OpenCode CLI et Desktop installés, version du CLI vérifiée et configuration globale commune confirmée</li>
+<li class="reveal-step" data-reveal-index="6" style="--step-delay:840ms;"><strong>Deux fournisseurs</strong> configurés dans OpenCode : un cloud et le local via Ollama</li>
+<li class="reveal-step" data-reveal-index="7" style="--step-delay:965ms;">Agent personnalisé `auto` déclaré dans `opencode.jsonc`, visible et utilisable depuis le CLI comme le Desktop</li>
+<li class="reveal-step" data-reveal-index="8" style="--step-delay:1090ms;">MCP Obsidian natif branché en HTTPS et vérifié sur une vraie note du vault</li>
+<li class="reveal-step" data-reveal-index="9" style="--step-delay:1215ms;">ai-native-dev-stack cloné ; installateur global vérifié (`setup-agents.ps1` Windows / `setup-agents.sh` POSIX)</li>
+<li class="reveal-step" data-reveal-index="10" style="--step-delay:1340ms;">Au moins un hook actif — format de commit ou formatage automatique</li>
+<li class="reveal-step" data-reveal-index="11" style="--step-delay:1465ms;">OpenDesign installé et connecté au même moteur OpenCode</li>
+<li class="reveal-step" data-reveal-index="12" style="--step-delay:1590ms;">Un premier ADR écrit dans <code>docs/adr/</code> sur une décision réelle du projet</li>
+</ul>
+</section>
+<footer class="doc-footer">
+    Document complémentaire au diaporama <code>index.html</code> — vérifiez les commandes marquées comme sujettes à évolution avant une installation en groupe.
+  </footer>
+</div>
+<a class="backtotop" href="#top">↑ Haut de page</a>
+<script>
+(function () {
+  var root = document.documentElement;
+  root.classList.add('guide-animated');
+
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.guide-section'));
+
+  function revealSection(section) {
+    if (!section || section.classList.contains('is-inview')) return;
+    section.classList.add('is-inview');
+  }
+
+  if (!('IntersectionObserver' in window)) {
+    sections.forEach(revealSection);
+    return;
+  }
+
+  var observer = new IntersectionObserver(function (entries, obs) {
+    entries.forEach(function (entry) {
+      if (!entry.isIntersecting) return;
+      revealSection(entry.target);
+      obs.unobserve(entry.target);
+    });
+  }, {
+    threshold: 0.10,
+    rootMargin: '0px 0px -12% 0px'
+  });
+
+  sections.forEach(function (section) {
+    observer.observe(section);
+  });
+
+  /* If a deep link opens directly inside a section already in view,
+     reveal it immediately instead of waiting for the first scroll event. */
+  window.requestAnimationFrame(function () {
+    sections.forEach(function (section) {
+      var r = section.getBoundingClientRect();
+      if (r.top < window.innerHeight * 0.88 && r.bottom > 0) {
+        revealSection(section);
+        observer.unobserve(section);
+      }
+    });
+  });
+})();
+</script><script>
+(function () {
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+
+    var ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+    document.body.removeChild(ta);
+
+    if (!ok) throw new Error('fallback_copy_failed');
+  }
+
+  async function writeClipboard(text) {
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+      try {
+        await navigator.clipboard.writeText(text);
+        return;
+      } catch (e) {
+        // file:// and some browser contexts may reject clipboard permissions
+      }
+    }
+    fallbackCopy(text);
+  }
+
+  function setButtonState(btn, state) {
+    var label = btn.querySelector('.copy-label');
+    if (!label) return;
+
+    btn.classList.remove('is-copied', 'is-error');
+
+    if (state === 'copied') {
+      btn.classList.add('is-copied');
+      label.textContent = 'Copié !';
+    } else if (state === 'error') {
+      btn.classList.add('is-error');
+      label.textContent = 'Échec';
+    } else {
+      label.textContent = 'Copier';
+    }
+
+    clearTimeout(btn.__copyReset);
+    if (state !== 'default') {
+      btn.__copyReset = setTimeout(function () {
+        setButtonState(btn, 'default');
+      }, 1600);
+    }
+  }
+
+  document.addEventListener('click', async function (event) {
+    var btn = event.target.closest && event.target.closest('.copy-btn, .copy-inline-btn');
+    if (!btn) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    var directText = btn.getAttribute('data-copy-text');
+    var id = btn.getAttribute('data-copy-target');
+    var target = id ? document.getElementById(id) : null;
+
+    var text = directText || (
+      target ? (target.innerText || target.textContent || '') : ''
+    );
+
+    text = text
+      .replace(/\u00a0/g, ' ')
+      .trim();
+
+    if (!text) {
+      setButtonState(btn, 'error');
+      return;
+    }
+
+    try {
+      await writeClipboard(text);
+      setButtonState(btn, 'copied');
+    } catch (e) {
+      setButtonState(btn, 'error');
+    }
+  }, true);
+})();
+</script><script>
+(function () {
+  var activeFrame = null;
+  var userInterrupted = false;
+
+  function easeInOutCubic(t) {
+    return t < 0.5
+      ? 4 * t * t * t
+      : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function cancelActiveScroll() {
+    userInterrupted = true;
+    if (activeFrame !== null) {
+      cancelAnimationFrame(activeFrame);
+      activeFrame = null;
+    }
+  }
+
+  function animateScrollTo(targetY, hash) {
+    if (activeFrame !== null) {
+      cancelAnimationFrame(activeFrame);
+      activeFrame = null;
+    }
+
+    userInterrupted = false;
+
+    var startY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var maxY = Math.max(
+      0,
+      document.documentElement.scrollHeight - window.innerHeight
+    );
+
+    targetY = Math.max(0, Math.min(targetY, maxY));
+
+    var distance = targetY - startY;
+    var absDistance = Math.abs(distance);
+
+    if (absDistance < 2) {
+      window.scrollTo(0, targetY);
+      if (hash && history && typeof history.replaceState === 'function') {
+        history.replaceState(null, '', hash);
+      }
+      return;
+    }
+
+    /*
+      Long jumps should visibly travel through the document instead of
+      teleporting. Duration scales with distance but remains bounded.
+    */
+    var duration = Math.max(
+      700,
+      Math.min(1800, 650 + absDistance * 0.16)
+    );
+
+    var startedAt = null;
+
+    function frame(now) {
+      if (userInterrupted) {
+        activeFrame = null;
+        return;
+      }
+
+      if (startedAt === null) startedAt = now;
+
+      var elapsed = now - startedAt;
+      var progress = Math.min(1, elapsed / duration);
+      var eased = easeInOutCubic(progress);
+
+      window.scrollTo(0, startY + distance * eased);
+
+      if (progress < 1) {
+        activeFrame = requestAnimationFrame(frame);
+      } else {
+        activeFrame = null;
+        window.scrollTo(0, targetY);
+
+        if (hash && history && typeof history.replaceState === 'function') {
+          history.replaceState(null, '', hash);
+        }
+      }
+    }
+
+    activeFrame = requestAnimationFrame(frame);
+  }
+
+  function getTargetY(target) {
+    var menu = document.querySelector('.toc');
+    var menuHeight = menu ? menu.getBoundingClientRect().height : 0;
+
+    /* Preserve breathing room below the sticky navigation. */
+    var offset = Math.max(96, menuHeight + 26);
+
+    return target.getBoundingClientRect().top +
+      (window.pageYOffset || document.documentElement.scrollTop || 0) -
+      offset;
+  }
+
+  document.addEventListener('click', function (event) {
+    var link = event.target.closest && event.target.closest('a[href^="#"]');
+    if (!link) return;
+
+    var href = link.getAttribute('href');
+    if (!href || href === '#') return;
+
+    var rawId = href.slice(1);
+    var id;
+    try {
+      id = decodeURIComponent(rawId);
+    } catch (e) {
+      id = rawId;
+    }
+
+    var target = id === 'top'
+      ? document.documentElement
+      : document.getElementById(id);
+
+    if (!target) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    var targetY = id === 'top' ? 0 : getTargetY(target);
+    animateScrollTo(targetY, href);
+  }, true);
+
+  /*
+    User input takes priority. If someone starts scrolling manually while
+    the animation is running, stop the automatic movement immediately.
+  */
+  window.addEventListener('wheel', cancelActiveScroll, { passive: true });
+  window.addEventListener('touchstart', cancelActiveScroll, { passive: true });
+  window.addEventListener('pointerdown', function (event) {
+    if (event.target.closest && event.target.closest('a[href^="#"]')) return;
+    cancelActiveScroll();
+  }, { passive: true });
+})();
+</script></body></html>
